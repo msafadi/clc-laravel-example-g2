@@ -16,13 +16,13 @@ Route::get('/', function () {
 });
 
 
-Route::namesapce('Admin')->prefix('admin')->group(function() {
-    Route::get('/categories', 'CategoriesController@index'); // admin/categoreis
-    Route::get('/categoreis/create', 'CategoriesController@create');
-    Route::post('/categoreis', '\CategoriesController@store');
-    Route::get('/categoreis/{id}', 'CategoriesController@edit');
-    Route::put('/categoreis/{id}', 'CategoriesController@update');
-    Route::delete('/categories/{id}', 'CategoriesController@delete');
+Route::namespace('Admin')->prefix('admin')->group(function() {
+    Route::get('/categories', 'CategoriesController@index')->name('categories'); // admin/categoreis
+    Route::get('/categories/create', 'CategoriesController@create')->name('categories.create');
+    Route::post('/categories', 'CategoriesController@store')->name('categories.store');
+    Route::get('/categories/{id}', 'CategoriesController@edit')->name('categories.edit');
+    Route::put('/categories/{id}', 'CategoriesController@update')->name('categories.update');
+    Route::delete('/categories/{id}', 'CategoriesController@delete')->name('categories.delete');
 
     Route::get('/products', 'ProductsController@index');
     Route::get('/products/create', 'ProductsController@create');
