@@ -5,14 +5,32 @@ namespace App\Http\Controllers\Admin;
 use App\Category;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CategoriesController extends Controller
 {
+    protected $rules = [
+        'name' => 'required|string|max:255|min:3',
+        'description' => 'nullable|string|max:2000',
+        'parent_id' => 'nullable|int|exists:categories,id',
+    ];
+
     // List all categories
-    public function index()
+    public function index($id = null)
     {
+        if ($id) {
+            // If there's a category ID we will fetch all its children!
+            $parent = Category::findOrFail($id);
+            $categories = Category::where('parent_id', '=', $id)->get();
+        } else {
+            // Get all root categories (no parent)
+            // Where parent_id IS NULL
+            $categories = Category::whereNull('parent_id')->get();
+            $parent = null;
+        }
         return view('admin.categories.index', [
-            'categories' => Category::all(),
+            'categories' => $categories,
+            'parent' => $parent,
         ]);
     }
 
@@ -25,15 +43,37 @@ class CategoriesController extends Controller
     // Create category on form submit
     public function store(Request $request)
     {
-        $category = new Category();
+        // Validate request directly!
+        $request->validate($this->rules);
+        
+        // Create a validator 
+        /*$validator = Validator::make($request->all(), $this->rules, [], [
+            'name' => 'Category name',
+            'parent_id' => 'Category parent',
+        ]);
+        $validator->validate();*/
+        /*if ($validator->fails()) {
+            return redirect()
+                ->back() // Redirect to previous route (back)
+                ->withErrors($validator) // Send the validation errors
+                ->withInput($request->all()); // Send the current request input
+        }*/
+
+        // Method 1: Create an empty model
+        /*$category = new Category();
         $category->name = $request->post('name'); //$request->input('name'); //$request->get('name'); //$request->name;
         $category->description = $request->post('description');
         $category->parent_id = $request->post('parent_id');
-        $category->save();
+        $category->save();*/
+
+        // Method 2: Create by mass assignment
+        $category = Category::create($request->all());
 
         
-        //return redirect(route('categories'));
-        return redirect()->route('categories');
+        $message = sprintf('%s created!', $category->name);
+        return redirect()
+            ->route('categories')
+            ->with('success', $message); // With flash message!
     }
 
     // Show edit form
@@ -52,14 +92,27 @@ class CategoriesController extends Controller
     // Update category on form submit
     public function update(Request $request, $id)
     {
+        $request->validate($this->rules);
+
+        // Update directly!
+        //Category::where('id', $id)->update($request->all());
+
+        // Get the category model and then update!
         $category = Category::findOrFail($id);
 
-        $category->name = $request->post('name');
+        // Method 1: Mass assignment
+        $category->update($request->all());
+        
+        // Method 2: Update per by property assignment
+        /*$category->name = $request->post('name');
         $category->description = $request->post('description');
         $category->parent_id = $request->post('parent_id');
-        $category->save();
+        $category->save();*/
 
-        return redirect()->route('categories');
+        $message = sprintf('%s updated!', $category->name);
+        return redirect()
+            ->route('categories')
+            ->with('success', $message); // Flash Message!
         
     }
 
@@ -68,6 +121,10 @@ class CategoriesController extends Controller
         $category = Category::findOrFail($id);
         $category->delete();
 
-        return redirect()->route('categories');
+        $message = sprintf('%s deleted!', $category->name);
+        return redirect()
+            ->route('categories')
+            ->with('success', $message);
     }
+
 }

@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,6 +20,7 @@ Route::get('/', function () {
 
 Route::namespace('Admin')->prefix('admin')->group(function() {
     Route::get('/categories', 'CategoriesController@index')->name('categories'); // admin/categoreis
+    Route::get('/categories/{id}/childs', 'CategoriesController@index')->name('categories.child');
     Route::get('/categories/create', 'CategoriesController@create')->name('categories.create');
     Route::post('/categories', 'CategoriesController@store')->name('categories.store');
     Route::get('/categories/{id}', 'CategoriesController@edit')->name('categories.edit');
