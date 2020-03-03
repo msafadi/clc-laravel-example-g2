@@ -27,12 +27,18 @@ Route::namespace('Admin')->prefix('admin')->group(function() {
     Route::put('/categories/{id}', 'CategoriesController@update')->name('categories.update');
     Route::delete('/categories/{id}', 'CategoriesController@delete')->name('categories.delete');
 
-    Route::get('/products', 'ProductsController@index');
-    Route::get('/products/create', 'ProductsController@create');
-    Route::post('/products', 'ProductsController@store');
-    Route::get('/products/{id}', 'ProductsController@edit');
-    Route::put('/products/{id}', 'ProductsController@update');
-    Route::delete('/products/{id}', 'ProductsController@delete');
+    Route::resource('products', 'ProductsController')->names([
+        //'index' => 'products', // Rename route (products.index) to (products)
+        //'destroy' => 'products.delete' // Rename route (products.destory) to (products.delete)
+        // others will remain with default names!
+    ]);
+    // GET /admin/products -> index (products.index)
+    // GET /admin/products/{product} -> show (products.show)
+    // GET /admin/products/{product}/edit -> edit (products.edit)
+    // GET /admin/products/create -> create (products.create)
+    // POST /admin/products -> store (products.store)
+    // PUT /admin/products/{product} -> update (products.update)
+    // DELETE /admin/products/{product} -> destroy (products.destroy)
 });
 
 
