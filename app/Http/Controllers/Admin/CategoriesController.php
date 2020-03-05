@@ -20,17 +20,18 @@ class CategoriesController extends Controller
     {
         if ($id) {
             // If there's a category ID we will fetch all its children!
-            $parent = Category::findOrFail($id);
-            $categories = Category::where('parent_id', '=', $id)->get();
+            $category = Category::findOrFail($id);
+            //$categories = Category::where('parent_id', '=', $id)->get();
+            $categories = $category->children()->with('parent')->get();
         } else {
             // Get all root categories (no parent)
             // Where parent_id IS NULL
-            $categories = Category::whereNull('parent_id')->get();
-            $parent = null;
+            $categories = Category::whereNull('parent_id')->with('parent')->get();
+            $category = null;
         }
         return view('admin.categories.index', [
             'categories' => $categories,
-            'parent' => $parent,
+            'parent' => $category,
         ]);
     }
 

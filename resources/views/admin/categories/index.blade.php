@@ -24,9 +24,12 @@
 @endsection
 
 @section('main')
-<h1 class="mb-4">Categories @if($parent) / {{ $parent->name }} @endif</h1>
-<a class="btn btn-primary btn-sm mb-2" href="{{ route('categories.create') }}">Create Category</a>
-
+<header class="d-flex flex-wrap mt-3 mb-5">
+    <h1 class="mr-auto">Categories @if($parent) : <small class="text-primary"> {{ $parent->name }}</small> @endif</h1>
+    <div>
+        <a class="btn btn-outline-primary btn-sm" href="{{ route('categories.create') }}">Create Category</a>
+    </div>
+</header>
 @if(session()->has('success'))
 <div class="alert alert-success">
     {{ session()->get('success') }}
@@ -45,30 +48,19 @@
         </tr>
     </thead>
     <tbody>
-        @php $i = 1 @endphp
         @forelse($categories as $cat)
-        {{-- @if ($loop->index == 2)
-                    @continue
-                @endif --}}
         <tr>
             <td>{{ $loop->iteration }}</td>
             <td>{{ $cat->id }}</td>
-            <td>@if($loop->first)
-                First:
-                @elseif($loop->last)
-                Last:
-                @else
-                Mid:
-                @endif
-                <a href="{{ route('categories.child', [$cat->id]) }}">{{ $cat->name }}</a></td>
-            <td>{{ $cat->parent_id }}</td>
+            <td><a href="{{ route('categories.child', [$cat->id]) }}">{{ $cat->name }}</a></td>
+            <td>{{ $cat->parent->name }}</td>
             <td>{{ $cat->created_at }}</td>
             <td>
-                <a href="{{ route('categories.edit', [$cat->id]) }}">Edit</a>
-                <form method="post" action="{{ route('categories.delete', [$cat->id]) }}">
+                <a href="{{ route('categories.edit', [$cat->id]) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                <form method="post" action="{{ route('categories.delete', [$cat->id]) }}" class="form-inline d-inline">
                     @csrf
                     @method('delete')
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
                 </form>
 
             </td>

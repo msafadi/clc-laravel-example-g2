@@ -54,9 +54,21 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{{ route('categories') }}">
                                 <span data-feather="file"></span>
-                                Orders
+                                Catrgories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('products.index') }}">
+                                <span data-feather="file"></span>
+                                Prdocuts
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('tags.index') }}">
+                                <span data-feather="file"></span>
+                                Tags
                             </a>
                         </li>
                     </ul>
@@ -75,20 +87,6 @@
                             </a>
                         </li>
                     </ul>
-
-                    @section('nav')
-                    <ul class="nav flex-column mb-2">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span data-feather="file-text"></span>
-                                Parent nav
-                            </a>
-                        </li>
-                    </ul>
-                    @show
-
-
-                    @yield('sidebar')
                 </div>
             </nav>
 

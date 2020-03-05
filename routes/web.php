@@ -1,5 +1,6 @@
 <?php
 
+use App\Tag;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +40,17 @@ Route::namespace('Admin')->prefix('admin')->group(function() {
     // POST /admin/products -> store (products.store)
     // PUT /admin/products/{product} -> update (products.update)
     // DELETE /admin/products/{product} -> destroy (products.destroy)
+
+    Route::resource('tags', 'TagsController');
+});
+
+Route::get('/tag/{id}', function($id) {
+    $tag = Tag::findOrFail($id);
+    echo $tag->name . "<br><ul>";
+    foreach ($tag->products as $product) {
+        echo '<li>' . $product->name . '</li>';
+    }
+    echo '</ul>';
 });
 
 

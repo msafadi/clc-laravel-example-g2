@@ -19,9 +19,19 @@ class ProductsController extends Controller
         $request = request();
         $perpage = $request->query('perpage');
         if ($perpage == 'all') {
-            $products = Product::all();
+            // Select * from products
+            // select * from categories where id IN (1, 2, 3)
+            $products = Product::with('category', 'tags')->get();
+            
+            /*$products = Product::join('categories', 'products.category_id', '=', 'categories.id')
+                ->select([
+                    'products.*',
+                    'categories.name as category_name',
+                ])
+                ->get();*/
+            
         } else {
-            $products = Product::paginate($perpage);
+            $products = Product::with('category', 'tags')->paginate($perpage);
         }
 
         return view('admin.products.index', [
