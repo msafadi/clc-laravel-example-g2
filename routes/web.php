@@ -57,3 +57,7 @@ Route::get('/tag/{id}', function($id) {
 
 
 
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home')->middleware('auth');
