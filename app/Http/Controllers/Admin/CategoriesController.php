@@ -15,6 +15,11 @@ class CategoriesController extends Controller
         'parent_id' => 'nullable|int|exists:categories,id',
     ];
 
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     // List all categories
     public function index($id = null)
     {
