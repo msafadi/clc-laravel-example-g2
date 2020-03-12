@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Product;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +24,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $slider_products = Product::with('category')->latest()->limit(2)->get(); // orderBy('created_at', 'DESC')
+        $new_arrivals = Product::latest()->limit(8)->get();
+        return view('home', [
+            'slider_products' => $slider_products,
+            'new_arrivals' => $new_arrivals,
+        ]);
     }
 }

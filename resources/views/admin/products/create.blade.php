@@ -48,7 +48,7 @@
     </div>
     <div class="form-group">
         <label for="image">Image</label>
-        <input type="file" name="image" class="form-control @error('image') is-invalid @enderror" id="image">
+        <input type="file" name="image[]" multiple class="form-control @error('image') is-invalid @enderror" id="image">
         @if($errors->has('image'))
         <p class="text-danger">{{ implode(', ', $errors->get('image')) }}</p>
         @endif

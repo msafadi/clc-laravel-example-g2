@@ -28,4 +28,21 @@ class Product extends Model
             'id'
         );
     }
+
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+
+    public function getSimilar()
+    {
+        $tags = $this->tags()->pluck('id')->toArray();
+        $tag_ids = implode(',', $tags);
+
+        $similar_prdoucts = Product::whereRaw("id IN (SELECT product_id FROM products_tags WHERE tag_id IN ($tag_ids))")
+            ->where('id', '<>', $this->id)
+            ->get();
+
+        return $similar_prdoucts;
+    }
 }

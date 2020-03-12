@@ -14,18 +14,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'HomeController@index')->name('home');
+Route::get('/category/{id}', 'CategoriesController@index')->name('category');
+Route::get('/product/{id}', 'ProductsController@show')->name('product.details');
 
-Route::get('/tag/{id}', function($id) {
+/*Route::get('/tag/{id}', function($id) {
     $tag = Tag::findOrFail($id);
     echo $tag->name . "<br><ul>";
     foreach ($tag->products as $product) {
         echo '<li>' . $product->name . '</li>';
     }
     echo '</ul>';
-});
+});*/
 
 
 
@@ -37,6 +37,6 @@ Auth::routes([
     'verify' => true, // Verification Email routes
 ]);
 
-Route::get('/home', 'HomeController@index')
+/*Route::get('/home', 'HomeController@index')
     ->name('home')
-    ->middleware('auth', 'verified');
+    ->middleware('auth', 'verified');*/

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Product;
+use App\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -62,26 +63,33 @@ class ProductsController extends Controller
             'category_id' => 'required|int|exists:categories,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable',
-            'image' => 'required|image|dimensions:min_width=200,min_height=200',
+            'image.*' => 'required|image|dimensions:min_width=200,min_height=200',
             'price' => 'required|numeric',
         ]);
 
-        if ($request->hasFile('image') && $request->file('image')->isValid()) {
-            // Store the uploaded file in the public disk
-            // (storage/app/public) and return its path
-            $image = $request->file('image')->store('images', 'public');
-            
-            /*$file = $request->file('image');
-            $filename = 'product-image-' . date('Y-m-d-H-i-s');
-            // $filename = $file->getClientOriginalName();
-            $image = $file->storeAs('images', $filename, 'public');*/
+        $product = Product::create($request->except('image'));
+
+        if ($request->hasFile('image')) {
+            $cover = '';
+            foreach ($request->file('image') as $image) {
+                
+                $path = $image->store('images', 'public');
+                if (empty($cover)) {
+                    $cover = $path;
+                }
+                /*ProductImage::create([
+                    'product_id' => $product->id,
+                    'image' => $path,
+                ]);*/
+                $product->images()->create([
+                    'image' => $path,
+                ]);
+            }
+
+            $product->update([
+                'image' => $cover,
+            ]);
         }
-
-        $data = array_merge($request->all(), [
-            'image' => $image,
-        ]);
-
-        $product = Product::create($data);
 
         return redirect()
             ->route('products.index')
