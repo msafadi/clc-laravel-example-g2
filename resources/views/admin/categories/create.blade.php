@@ -21,14 +21,14 @@
         @endif
     </div>
     <div class="form-group">
-        <label for="description">Description</label>
+        <label for="description">{{ __('Description') }}</label>
         <textarea name="description" class="form-control @error('description') is-invalid @enderror" id="description">{{ old('description') }}</textarea>
         @error('description')
         <p class="text-danger">{{ $message }}</p>
         @enderror
     </div>
     <div class="form-group">
-        <label for="parent_id">Category Parent</label>
+        <label for="parent_id">{{ __('Category Parent') }}</label>
         <select name="parent_id" id="parent_id" class="form-control @error('parent_id') is-invalid @enderror">
             <option value="">No Parent</option>
             @foreach (App\Category::all() as $cat)

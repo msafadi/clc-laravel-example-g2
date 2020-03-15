@@ -1,4 +1,3 @@
-
 @extends('layouts.home')
 
 @section('content')
@@ -62,7 +61,12 @@
                                         <ul class="product__action">
                                             <li><a href="wishlist.html"><i class="icon-heart icons"></i></a></li>
 
-                                            <li><a href="cart.html"><i class="icon-handbag icons"></i></a></li>
+                                            <li><form method="post" action="{{ route('cart.store') }}">
+                                                @csrf
+                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                <button type="submit" class="btn btn-link"><i class="icon-handbag icons"></i></button>
+                                            </form>
+                                            </li>
 
                                             <li><a href="#"><i class="icon-shuffle icons"></i></a></li>
                                         </ul>

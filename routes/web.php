@@ -1,6 +1,7 @@
 <?php
 
 use App\Tag;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +15,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'HomeController@index')->name('home');
-Route::get('/category/{id}', 'CategoriesController@index')->name('category');
-Route::get('/product/{id}', 'ProductsController@show')->name('product.details');
+//Route::middleware('lang')->prefix('{lang?}')->group(function() {
+    Auth::routes([
+        //'register' => false,
+        'verify' => true, // Verification Email routes
+    ]);
+
+    Route::get('/', 'HomeController@index')->name('home');
+    Route::get('/category/{id}', 'CategoriesController@index')->name('category');
+    Route::get('/product/{id}', 'ProductsController@show')->name('product.details');
+
+    Route::post('cart', 'CartController@store')->name('cart.store');
+    Route::get('cart', 'CartController@index')->name('cart');
+    Route::get('cart/{product_id}', 'CartController@remove')->name('cart.remove');
+
+//});
+
+Route::get('download/{id}', 'FileController@download');
+Route::get('view-file/{id}', 'FileController@view')->name('file');
 
 /*Route::get('/tag/{id}', function($id) {
     $tag = Tag::findOrFail($id);
@@ -26,16 +42,6 @@ Route::get('/product/{id}', 'ProductsController@show')->name('product.details');
     }
     echo '</ul>';
 });*/
-
-
-
-
-
-
-Auth::routes([
-    //'register' => false,
-    'verify' => true, // Verification Email routes
-]);
 
 /*Route::get('/home', 'HomeController@index')
     ->name('home')
