@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -29,6 +30,7 @@ class HomeController extends Controller
         return view('home', [
             'slider_products' => $slider_products,
             'new_arrivals' => $new_arrivals,
+            'online_visitors' => DB::table('sessions')->count(),
         ]);
     }
 }

@@ -34,13 +34,18 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
-    public function getSimilar()
+    public function getSimilar($limit = 4, $order = 'created_at', $sort = 'DESC')
     {
         $tags = $this->tags()->pluck('id')->toArray();
+        if (!$tags) {
+            return [];
+        }
         $tag_ids = implode(',', $tags);
 
         $similar_prdoucts = Product::whereRaw("id IN (SELECT product_id FROM products_tags WHERE tag_id IN ($tag_ids))")
             ->where('id', '<>', $this->id)
+            ->limit($limit)
+            ->inRandomOrder()
             ->get();
 
         return $similar_prdoucts;

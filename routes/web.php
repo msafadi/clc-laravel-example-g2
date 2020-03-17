@@ -15,21 +15,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::middleware('lang')->prefix('{lang?}')->group(function() {
+Route::middleware('lang')->prefix('{lang?}')->where([
+    'lang' => '[a-z]{2}'
+])->group(function() {
     Auth::routes([
         //'register' => false,
         'verify' => true, // Verification Email routes
     ]);
 
     Route::get('/', 'HomeController@index')->name('home');
-    Route::get('/category/{id}', 'CategoriesController@index')->name('category');
-    Route::get('/product/{id}', 'ProductsController@show')->name('product.details');
+    Route::get('/category/{id}', 'CategoriesController@index')->name('category')->where([
+        'id' => '\d+'
+    ]);
+    Route::get('/product/{id}', 'ProductsController@show')->name('product.details')->where([
+        'id' => '\d+'
+    ]);;
 
-    Route::post('cart', 'CartController@store')->name('cart.store');
-    Route::get('cart', 'CartController@index')->name('cart');
-    Route::get('cart/{product_id}', 'CartController@remove')->name('cart.remove');
+    Route::post('cart', 'CartController@storeSession')->name('cart.store');
+    Route::get('cart', 'CartController@indexSession')->name('cart');
+    Route::get('cart/{product_id}', 'CartController@removeSession')->name('cart.remove');
 
-//});
+});
 
 Route::get('download/{id}', 'FileController@download');
 Route::get('view-file/{id}', 'FileController@view')->name('file');
