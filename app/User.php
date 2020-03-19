@@ -36,4 +36,22 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function cart()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function cartProducts()
+    {
+        return $this->belongsToMany(Product::class, 'carts')
+            ->using(Cart::class)
+            ->withPivot(['quantity', 'price'])
+            ->as('cart');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

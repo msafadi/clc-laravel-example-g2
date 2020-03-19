@@ -22,6 +22,16 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($products as $product)
+                                        @php
+                                            if (isset($quantity[$product->id])) {
+                                                $q = $quantity[$product->id];
+                                                $price = $product->price;
+                                            } else {
+                                                $q = $product->cart->quantity;
+                                                $price = $product->cart->price;
+                                            }
+
+                                        @endphp
                                         <tr>
                                             <td class="product-thumbnail"><a href="#"><img src="{{ route('file', [$product->id]) }}" alt="product img" /></a></td>
                                             <td class="product-name"><a href="#">{{ $product->name }}</a>
@@ -31,8 +41,8 @@
                                                 </ul>
                                             </td>
                                             <td class="product-price"><span class="amount">${{ $product->price }}</span></td>
-                                            <td class="product-quantity"><input type="number" value="{{ $quantity[$product->id] }}" /></td>
-                                            <td class="product-subtotal">£{{ $product->price * $quantity[$product->id] }}</td>
+                                            <td class="product-quantity"><input type="number" value="{{ $q }}" /></td>
+                                            <td class="product-subtotal">{{ $product->price * $q }}$</td>
                                             <td class="product-remove"><a href="{{ route('cart.remove', [$product->id]) }}"><i class="icon-trash icons"></i></a></td>
                                         </tr>
                                         @endforeach

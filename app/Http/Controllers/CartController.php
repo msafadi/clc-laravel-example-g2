@@ -2,16 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Cart;
 use App\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
         
+        if ($user) {
+            return view('cart', [
+                'products' => $user->cartProducts,
+            ]);
+        }
+
         $request = request();
 
         $product_ids = $request->cookie('cart', []);
@@ -31,14 +40,49 @@ class CartController extends Controller
 
     public function store(Request $request)
     {
-        if (Auth::check()) {
+        $request->validate([
+            'product_id' => 'required|int|exists:products,id',
+            'quantity' => 'int',
+        ]);
+        $product_id = $request->post('product_id');
+        
+        $user = Auth::user();
+
+        if ($user) {
+            $quantity = $request->post('quantity', 1);
+            $price = Product::find($product_id)->price;
+            Cart::updateOrCreate(
+                ['user_id' => $user->id, 'product_id' => $product_id],
+                ['quantity' => DB::raw('quantity + ?', [$quantity]), 'price' => $price]
+            );
+
+            /*$cart = Cart::where('user_id', $user->id)
+                ->where('product_id', $product_id)
+                ->first();
+            if ($cart) {
+                Cart::where('user_id', $user->id)
+                    ->where('product_id', $product_id)
+                    ->update([
+                        'quantity' => $cart->quantity + $request->post('quantity', 1),
+                        'price' => Product::find($product_id)->price,
+                    ]);
+            } else {
+                $cart = Cart::forceCreate([
+                    'user_id' => $user->id,
+                    'product_id' => $product_id,
+                    'quantity' => $request->post('quantity', 1),
+                    'price' => Product::find($product_id)->price,
+                ]);
+            }*/
+
+            return redirect()->route('cart');
 
         } else {
             $products = $request->cookie('cart', []);
             if ($products) {
                 $products = unserialize($products);
             }
-            $product_id = $request->post('product_id');
+            
             if (array_key_exists($product_id, $products)) {
                 $products[$product_id]++;
             } else {

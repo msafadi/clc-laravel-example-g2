@@ -34,6 +34,12 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class)
+            ->using(OrderProduct::class);
+    }
+
     public function getSimilar($limit = 4, $order = 'created_at', $sort = 'DESC')
     {
         $tags = $this->tags()->pluck('id')->toArray();
