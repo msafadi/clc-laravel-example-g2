@@ -51,18 +51,20 @@ class CartController extends Controller
         if ($user) {
             $quantity = $request->post('quantity', 1);
             $price = Product::find($product_id)->price;
+            
             Cart::updateOrCreate(
                 ['user_id' => $user->id, 'product_id' => $product_id],
-                ['quantity' => DB::raw('quantity + ?', [$quantity]), 'price' => $price]
+                [
+                    'quantity' => DB::raw('quantity + ' . $quantity), 
+                    'price' => $price
+                ]
             );
 
             /*$cart = Cart::where('user_id', $user->id)
                 ->where('product_id', $product_id)
                 ->first();
             if ($cart) {
-                Cart::where('user_id', $user->id)
-                    ->where('product_id', $product_id)
-                    ->update([
+                $cart->update([
                         'quantity' => $cart->quantity + $request->post('quantity', 1),
                         'price' => Product::find($product_id)->price,
                     ]);
@@ -97,8 +99,38 @@ class CartController extends Controller
         }
     }
 
+    public function update(Request $request)
+    {
+        $quantity = $request->post('quantity');
+        $user = Auth::user();
+        if ($user) {
+            foreach ($quantity as $pid => $q) {
+                $cart = Cart::where([
+                    'user_id' => $user->id,
+                    'product_id' => $pid
+                ]);
+                if ($q <= 0) {
+                    $cart->delete();
+                } else {
+                    $cart->update([
+                        'quantity' => $q
+                    ]);
+                }
+            }
+        }
+        return redirect()->route('cart');
+    }
+
     public function remove($product_id)
     {
+        $user = Auth::user();
+        if ($user) {
+            Cart::where('user_id', $user->id)
+                ->where('product_id', $product_id)
+                ->delete();
+            return redirect()->route('cart');
+        }
+
         // Delete all cookie!
         /*$cookie = Cookie::make('cart', '', -100); // One week
 

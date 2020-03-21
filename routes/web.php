@@ -38,7 +38,11 @@ Route::middleware('lang')
 
         Route::post('cart', 'CartController@store')->name('cart.store');
         Route::get('cart', 'CartController@index')->name('cart');
+        Route::put('cart', 'CartController@update')->name('cart.update');
         Route::get('cart/remove/{product_id}', 'CartController@remove')->name('cart.remove');
+
+        Route::get('orders', 'OrdersController@index')->name('orders')->middleware('auth');
+        Route::get('orders/create', 'OrdersController@store')->name('orders.store')->middleware('auth');
 });
 
 Route::get('download/{id}', 'FileController@download');

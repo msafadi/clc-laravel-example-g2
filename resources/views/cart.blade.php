@@ -7,7 +7,9 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                        <form action="#">               
+                        <form action="{{ route('cart.update') }}" method="post">
+                            @csrf
+                            @method('put')              
                             <div class="table-content table-responsive">
                                 <table>
                                     <thead>
@@ -41,7 +43,7 @@
                                                 </ul>
                                             </td>
                                             <td class="product-price"><span class="amount">${{ $product->price }}</span></td>
-                                            <td class="product-quantity"><input type="number" value="{{ $q }}" /></td>
+                                            <td class="product-quantity"><input type="number" value="{{ $q }}" name="quantity[{{ $product->id }}]" min="0"></td>
                                             <td class="product-subtotal">{{ $product->price * $q }}$</td>
                                             <td class="product-remove"><a href="{{ route('cart.remove', [$product->id]) }}"><i class="icon-trash icons"></i></a></td>
                                         </tr>
@@ -56,8 +58,8 @@
                                             <a href="#">Continue Shopping</a>
                                         </div>
                                         <div class="buttons-cart checkout--btn">
-                                            <a href="#">update</a>
-                                            <a href="#">checkout</a>
+                                            <button type="submit">update</button>
+                                            <a href="{{ route('orders.store') }}">checkout</a>
                                         </div>
                                     </div>
                                 </div>

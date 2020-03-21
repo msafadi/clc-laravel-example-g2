@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    protected $guarded = [];
     //
     public function user()
     {
@@ -14,7 +15,15 @@ class Order extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class)
+        return $this->belongsToMany(Product::class, 'order_products')
             ->using(OrderProduct::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::created(function ($order) {
+            //dd($order);
+        });
     }
 }

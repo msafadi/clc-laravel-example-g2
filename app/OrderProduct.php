@@ -13,6 +13,8 @@ class OrderProduct extends Pivot
 
     public $timestamps = false;
 
+    protected $guarded = [];
+
     public function order()
     {
         return $this->belongsTo(Order::class);

@@ -2,14 +2,20 @@
 
 namespace App;
 
+use App\Traits\HasCompositeKeys;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class Cart extends Pivot
 {
+    use HasCompositeKeys;
+    
     protected $table = 'carts';
 
-    protected $guarded = [];
+    protected $fillable = ['user_id', 'product_id', 'quantity', 'price'];
+
+    protected $primaryKey = ['user_id', 'product_id'];
 
     public $incrementing = false;
 
