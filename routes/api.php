@@ -1,5 +1,6 @@
 <?php
 
+use App\User;
 use Illuminate\Http\Request;
 
 /*
@@ -15,4 +16,14 @@ use Illuminate\Http\Request;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::post('login', 'Api\LoginController@login')->name('api.login');
+
+Route::apiResource('products', 'Api\ProductsController')->names([
+    'index' => 'api.products.index',
+]);
+
+Route::get('users', function() {
+    return User::all();
 });

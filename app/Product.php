@@ -9,6 +9,24 @@ class Product extends Model
     //
     protected $fillable = ['name', 'description', 'category_id', 'image', 'price'];
 
+    protected $hidden = [
+        //'price',
+    ];
+
+    protected $appends = [
+        'category_name', 'full_name'
+    ];
+
+    public function getCategoryNameAttribute()
+    {
+        return '';
+    }
+
+    public function getFullNameAttribute()
+    {
+        return $this->name . ' ' . $this->price;
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id', 'id')
