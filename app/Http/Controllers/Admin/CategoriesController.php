@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Category;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class CategoriesController extends Controller
@@ -23,6 +25,9 @@ class CategoriesController extends Controller
     // List all categories
     public function index($id = null)
     {
+        $this->authorize('view-any', Category::class);
+        //dd(Gate::forUser($user)->allows('view-category'));
+
         if ($id) {
             // If there's a category ID we will fetch all its children!
             $category = Category::findOrFail($id);
@@ -43,12 +48,15 @@ class CategoriesController extends Controller
     // Show create form
     public function create()
     {
+        $this->authorize('create', Category::class);
+
         return view('admin.categories.create');
     }
 
     // Create category on form submit
     public function store(Request $request)
     {
+        $this->authorize('create', Category::class);
         // Validate request directly!
         $request->validate($this->rules);
         
@@ -86,6 +94,13 @@ class CategoriesController extends Controller
     public function edit($id)
     {
         $category = Category::find($id);
+        $this->authorize('update', $category);
+        
+        /*$user = Auth::user();
+        if (!$user->can('update', $category)) {
+            return view('');
+        }*/
+
         if (!$category) {
             abort(404);
         }
@@ -105,6 +120,7 @@ class CategoriesController extends Controller
 
         // Get the category model and then update!
         $category = Category::findOrFail($id);
+        $this->authorize('update', $category);
 
         // Method 1: Mass assignment
         $category->update($request->all());
@@ -125,6 +141,7 @@ class CategoriesController extends Controller
     public function delete($id)
     {
         $category = Category::findOrFail($id);
+        $this->authorize('delete', $category);
         $category->delete();
 
         $message = sprintf('%s deleted!', $category->name);

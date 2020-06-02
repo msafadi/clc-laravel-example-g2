@@ -56,13 +56,16 @@
             <td>{{ $cat->parent->name }}</td>
             <td>{{ $cat->created_at }}</td>
             <td>
+                @can('update', $cat)
                 <a href="{{ route('categories.edit', [$cat->id]) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                @endcan
+                @can('delete', $cat)
                 <form method="post" action="{{ route('categories.delete', [$cat->id]) }}" class="form-inline d-inline">
                     @csrf
                     @method('delete')
                     <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
                 </form>
-
+                @endcan
             </td>
         </tr>
         @empty

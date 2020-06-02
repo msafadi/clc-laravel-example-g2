@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -53,5 +54,24 @@ class User extends Authenticatable implements MustVerifyEmail
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'users_roles');
+    }
+
+    public function hasPermission($code)
+    {
+        /*SELECT * FROM
+roles_permissions WHERE permission = 'categories.delete'
+AND role_id IN (SELECT role_id FROM users_roles WHERE user_id = 1);*/
+
+        $count = DB::table('roles_permissions')
+            ->where('permission', $code)
+            ->whereRaw('role_id IN (SELECT role_id FROM users_roles WHERE user_id = ?)', [$this->id])
+            ->count();
+
+        return $count;
     }
 }

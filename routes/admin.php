@@ -22,3 +22,5 @@ Route::resource('products', 'ProductsController')->names([
 // DELETE /admin/products/{product} -> destroy (products.destroy)
 
 Route::resource('tags', 'TagsController');
+
+Route::resource('roles', 'RolesController');
