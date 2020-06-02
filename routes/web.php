@@ -48,6 +48,9 @@ Route::middleware('lang')
 Route::get('download/{id}', 'FileController@download');
 Route::get('view-file/{id}', 'FileController@view')->name('file');
 
+Route::get('notifications', 'NotificationsController@index')->name('notifications');
+Route::get('notifications/{id}', 'NotificationsController@show')->name('notification.show');
+
 /*Route::get('/tag/{id}', function($id) {
     $tag = Tag::findOrFail($id);
     echo $tag->name . "<br><ul>";

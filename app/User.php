@@ -74,4 +74,9 @@ AND role_id IN (SELECT role_id FROM users_roles WHERE user_id = 1);*/
 
         return $count;
     }
+
+    public function routeNotificationForMail($notification = null)
+    {
+        return $this->email;
+    }
 }

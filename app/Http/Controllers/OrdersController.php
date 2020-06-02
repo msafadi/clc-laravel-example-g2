@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Cart;
+use App\Events\NewOrder;
 use App\Events\OrderCreated;
+use App\Notifications\NewOrderNotification;
 use App\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +48,12 @@ class OrdersController extends Controller
             Cart::where('user_id', $user->id)->delete();
             
             DB::commit();
+
+            event(new NewOrder($order));
+
+            Auth::user()->notify(new NewOrderNotification($order));
+
+
 
             //event(new OrderCreated($order));
 

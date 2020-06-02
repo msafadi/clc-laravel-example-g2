@@ -22,7 +22,7 @@ class Lang
 
         $acceptLang = $request->header('Accept-Language');
         //return response($acceptLang);
-        $acceptLangArr = explode(',', $acceptLang);
+        $acceptLangArr = ['en']; //explode(',', $acceptLang);
 
         $route = Route::current();
         $lang = $route->parameter('lang', $acceptLangArr[0]);
