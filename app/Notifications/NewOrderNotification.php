@@ -2,11 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Channels\TweetSms;
 use App\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\NexmoMessage;
 
 class NewOrderNotification extends Notification
 {
@@ -35,7 +38,7 @@ class NewOrderNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return [/*'mail',*/ 'database', /*'broadcast', 'nexmo',*/ TweetSms::class];
     }
 
     /**
@@ -69,7 +72,39 @@ class NewOrderNotification extends Notification
             'icon' => '',
         ];
     }
+
+    /**
+     * Get the notification data.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function toBroadcast($notifiable)
+    {
+        return new BroadcastMessage([
+            'message' => 'A new order has been created Order #' . $this->order->id,
+            'action' => route('orders'),
+            'icon' => '',
+        ]);
+    }
+
+    /**
+     * Get the notification data.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function toNexmo($notifiable)
+    {
+        $message = new NexmoMessage();
+        $message->content('New Order #' . $this->order->id);
+        return $message;
+    }
     
+    public function toTweetSms($notifiable)
+    {
+        return 'New Order #' . $this->order->id;
+    }
 
     /**
      * Get the array representation of the notification.

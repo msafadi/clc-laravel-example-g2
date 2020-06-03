@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('app.name'))</title>
 
     <!-- Bootstrap core CSS -->
@@ -97,6 +98,10 @@
     </div>
     <script src="{{ asset('js/jquery-3.4.1.slim.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+        window.userId = "{{ Auth::id() }}";
+    </script>
+    <script src="{{ asset('js/app.js') }}"></script>
     @stack('js')
 </body>
 

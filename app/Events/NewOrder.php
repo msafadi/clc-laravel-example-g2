@@ -10,8 +10,9 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 
-class NewOrder
+class NewOrder implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -35,6 +36,14 @@ class NewOrder
         return $this->order;
     }
 
+    public function broadcastWith()
+    {
+        return [
+            'message' => 'A new order has creatd #' . $this->order->id,
+            'user' => Auth::user()->name,
+        ];
+    }
+
     /**
      * Get the channels the event should broadcast on.
      *
@@ -42,6 +51,6 @@ class NewOrder
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PrivateChannel('orders');
     }
 }
