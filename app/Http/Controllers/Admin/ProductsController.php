@@ -7,6 +7,7 @@ use App\Product;
 use App\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class ProductsController extends Controller
 {
@@ -18,25 +19,50 @@ class ProductsController extends Controller
     public function index()
     {
         $request = request();
+
+        $name = $request->query('name');
+        $price_from = $request->query('price_from');
+        $price_to = $request->query('price_to');
+        $category_id = $request->query('category');
+        $date = $request->query('date');
+
         $perpage = $request->query('perpage');
+
+        $model = Product::with('category', 'tags')->withTrashed();//->withoutGlobalScope('vip');
+
+        $model->when($name, function($query, $name) {
+            return $query->where('name', 'LIKE', "%{$name}%");
+        });
+        $model->when($date, function($query, $date) {
+            return $query->whereDate('created_at', '=', $date);
+        });
+        /*if ($name) {
+            $model->where('name', 'LIKE', "%{$name}%");
+        }*/
+        if ($price_from) {
+            $model->where('price', '>=', $price_from);
+        }
+        if ($price_to) {
+            $model->where('price', '<=', $price_to);
+        }
+        if ($category_id) {
+            $model->where('category_id', '=', $category_id);
+        }
+        
         if ($perpage == 'all') {
-            // Select * from products
-            // select * from categories where id IN (1, 2, 3)
-            $products = Product::with('category', 'tags')->get();
-            
-            /*$products = Product::join('categories', 'products.category_id', '=', 'categories.id')
-                ->select([
-                    'products.*',
-                    'categories.name as category_name',
-                ])
-                ->get();*/
-            
+            $products = $model->get();
+ 
         } else {
-            $products = Product::with('category', 'tags')->paginate($perpage);
+            $products = $model->paginate($perpage);
         }
 
         return view('admin.products.index', [
             'products' => $products,
+            'name' => $name,
+            'price_from' => $price_from,
+            'price_to' => $price_to,
+            'category_id' => $category_id,
+            'date' => $date,
         ]);
     }
 
@@ -182,7 +208,13 @@ class ProductsController extends Controller
     {
         //
         $product = Product::findOrFail($id);
-        $product->delete();
+        try {
+            $product->delete();
+        } catch (Throwable $e) {
+            return redirect()
+            ->route('products.index')
+            ->with('success', $e->getMessage());
+        }
 
         // Delete the product file
         Storage::disk('public')->delete($product->image);
@@ -190,5 +222,27 @@ class ProductsController extends Controller
         return redirect()
             ->route('products.index')
             ->with('success', "Product {$product->name} deleted!");
+    }
+
+    public function restore(Request $request, $id)
+    {
+        //
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->restore();
+
+        return redirect()
+            ->route('products.index')
+            ->with('success', "Product {$product->name} restored!");
+    }
+
+    public function forceDelete($id)
+    {
+        //
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->forceDelete();
+
+        return redirect()
+            ->route('products.index')
+            ->with('success', "Product {$product->name} deleted completelty!");
     }
 }

@@ -49,7 +49,7 @@ class OrdersController extends Controller
             
             DB::commit();
 
-            event(new NewOrder($order));
+            //event(new NewOrder($order));
 
             Auth::user()->notify(new NewOrderNotification($order));
 

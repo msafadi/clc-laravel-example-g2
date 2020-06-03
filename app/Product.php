@@ -2,10 +2,15 @@
 
 namespace App;
 
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    use SoftDeletes;
+
     //
     protected $fillable = ['name', 'description', 'category_id', 'image', 'price'];
 
@@ -16,6 +21,31 @@ class Product extends Model
     protected $appends = [
         'category_name', 'full_name'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        /*static::addGlobalScope('vip', function(Builder $builder) {
+            return $builder->where('price', '>=', 300);
+        });*/
+
+        static::deleting(function($model) {
+            $count = OrderProduct::where('product_id', $model->id)->count();
+            if ($count > 0) {
+                throw new Exception('Cannot delete product has orders!');
+            }
+        });
+    }
+
+    public function scopePrice(Builder $builder, $price, $price2 = 0)
+    {
+        $builder->where('price', '>=', $price);
+        if ($price2) {
+            $builder->where('price', '<=', $price2);
+        }
+        return $builder;
+    }
 
     public function getCategoryNameAttribute()
     {

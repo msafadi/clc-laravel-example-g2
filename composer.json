@@ -11,8 +11,10 @@
         "php": "^7.2",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
+        "laravel/nexmo-notification-channel": "^2.3",
         "laravel/tinker": "^2.0",
-        "laravel/ui": "^1.0"
+        "laravel/ui": "^1.0",
+        "pusher/pusher-php-server": "~4.0"
     },
     "require-dev": {
         "facade/ignition": "^1.4",

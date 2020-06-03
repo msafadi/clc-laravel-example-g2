@@ -63,3 +63,10 @@ Route::get('notifications/{id}', 'NotificationsController@show')->name('notifica
 /*Route::get('/home', 'HomeController@index')
     ->name('home')
     ->middleware('auth', 'verified');*/
+
+
+Route::get('storage/{file}', function($file) {
+
+    return response()->file(storage_path('app/public/' . $file));
+
+})->where('file', '.*');

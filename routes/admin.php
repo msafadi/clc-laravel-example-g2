@@ -8,6 +8,8 @@ Route::get('/categories/{id}', 'CategoriesController@edit')->name('categories.ed
 Route::put('/categories/{id}', 'CategoriesController@update')->name('categories.update');
 Route::delete('/categories/{id}', 'CategoriesController@delete')->name('categories.delete');
 
+Route::post('products/{id}/restore', 'ProductsController@restore')->name('products.restore');
+Route::delete('products/{id}/force-delete', 'ProductsController@forceDelete')->name('products.forceDelete');
 Route::resource('products', 'ProductsController')->names([
     //'index' => 'products', // Rename route (products.index) to (products)
     //'destroy' => 'products.delete' // Rename route (products.destory) to (products.delete)

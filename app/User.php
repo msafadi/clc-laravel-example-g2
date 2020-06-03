@@ -79,4 +79,9 @@ AND role_id IN (SELECT role_id FROM users_roles WHERE user_id = 1);*/
     {
         return $this->email;
     }
+
+    public function routeNotificationForNexmo($notification = null)
+    {
+        return $this->mobile;
+    }
 }
